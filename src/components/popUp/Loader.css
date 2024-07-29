@@ -1,0 +1,20 @@
+.loader {
+    border: 8px solid rgba(0, 0, 255, 0.3); /* Light blue color */
+    border-top: 8px solid blue; /* Blue color for the top */
+    border-radius: 50%;
+    width: 60px; /* Size of the loader */
+    height: 60px; /* Size of the loader */
+    animation: spin 1s linear infinite; /* Animation */
+    margin: 20px auto; /* Center the loader */
+  }
+  
+  /* Keyframes for spinning animation */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
