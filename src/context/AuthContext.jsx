@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
         const response = await axios.get('/auth/check-auth', {
           withCredentials: true, // Ensure cookies are sent with the request
         });
+
         if (response.status === 200) {
           setIsAuthenticated(true);
         } else {
@@ -30,12 +31,28 @@ export const AuthProvider = ({ children }) => {
     };
 
     checkAuth();
-  }, []);
+  }, []); // Run once on mount
 
-  const login = async (email) => { // Change parameter to email
+  // Call checkAuth whenever isAuthenticated changes
+  useEffect(() => {
+    const recheckAuth = async () => {
+      if (!loading) {
+        try {
+          await checkAuth(); // Call the function whenever isAuthenticated changes
+        } catch (error) {
+          console.error('Error during rechecking authentication:', error);
+        }
+      }
+    };
+
+    recheckAuth(); // Invoke the function
+
+  }, [isAuthenticated]); // Run when isAuthenticated changes
+
+  const login = async (email) => {
     try {
-      await axios.post('/auth/login', { email }, { withCredentials: true }); // Update request to send email
-      setIsAuthenticated(true);
+      await axios.post('/auth/login', { email }, { withCredentials: true });
+      setIsAuthenticated(true); // Assume successful login sets authentication
     } catch (error) {
       console.error('Login failed:', error.response?.data || error.message);
       setIsAuthenticated(false);
