@@ -49,15 +49,26 @@ export const AuthProvider = ({ children }) => {
 
   }, [isAuthenticated]); // Run when isAuthenticated changes
 
-  const login = async (email) => {
-    try {
-      await axios.post('/auth/login', { email }, { withCredentials: true });
-      setIsAuthenticated(true); // Assume successful login sets authentication
-    } catch (error) {
-      console.error('Login failed:', error.response?.data || error.message);
+const login = async (email) => {
+  try {
+    const response = await axios.post('/auth/login', { email }, { withCredentials: true });
+
+    // Check if the login was successful
+    if (response.status === 200) {
+      // Assuming the server response indicates success
+      setIsAuthenticated(true); // Set authentication to true only if login is successful
+      console.log('Login successful:', response.data);
+    } else {
+      // Handle unexpected status codes
       setIsAuthenticated(false);
+      console.error('Unexpected response login failed:', response.data);
     }
-  };
+  } catch (error) {
+    console.error('Login failed:', error.response?.data || error.message);
+    setIsAuthenticated(false); // Set authentication to false on error
+  }
+};
+
 
   const logout = async () => {
     try {
