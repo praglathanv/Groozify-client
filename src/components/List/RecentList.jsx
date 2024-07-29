@@ -71,3 +71,5 @@ const RecentList = () => {
     </div>
   );
 };
+
+export default RecentList;
