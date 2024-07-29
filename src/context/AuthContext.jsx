@@ -9,9 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Check authentication status on component mount
-  useEffect(() => {
-    const checkAuth = async () => {
+      const checkAuth = async () => {
       try {
         const response = await axios.get('/auth/check-auth', {
           withCredentials: true, // Ensure cookies are sent with the request
@@ -30,6 +28,8 @@ export const AuthProvider = ({ children }) => {
       }
     };
 
+  // Check authentication status on component mount
+  useEffect(() => {
     checkAuth();
   }, []); // Run once on mount
 
