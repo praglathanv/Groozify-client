@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { GoDotFill } from 'react-icons/go';
+import { useAuth } from './AuthProvider'; // Adjust the import based on your file structure
 
 const RecentList = () => {
+  const { isAuthenticated, loading: authLoading } = useAuth(); // Get authentication state
   const [recentList, setRecentList] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const handleGetRecentList = async () => {
+  const handleGetRecentList = async (token) => {
     try {
       const response = await axios.get('/user/grocery-lists', {
         headers: {
-          'Authorization': `Bearer ${Cookies.get('token')}` // Include token for authentication
+          'Authorization': `Bearer ${token}` // Use the token for authentication
         }
       });
 
@@ -34,10 +35,17 @@ const RecentList = () => {
   };
 
   useEffect(() => {
-    handleGetRecentList(); // Call the function on component mount
-  }, []);
+    if (isAuthenticated) {
+      const token = Cookies.get('token'); // Get the token from cookies
+      console.log('Token:', token); // Log the token to the console
+      handleGetRecentList(token); // Call the function with the token
+    } else {
+      setError('User is not authenticated. Please log in.');
+      setLoading(false); // Set loading to false if user is not authenticated
+    }
+  }, [isAuthenticated]); // Run when isAuthenticated changes
 
-  if (loading) {
+  if (loading || authLoading) { // Wait for both loading states
     return <div>Loading...</div>;
   }
 
@@ -56,7 +64,7 @@ const RecentList = () => {
                 <span className='flex-1'>{grocery.item}</span> 
                 <span className='flex-1'>-</span>
                 <span className='flex-1'>{grocery.quantity}</span>
-                <span ><GoDotFill className='mt-1'/></span>
+                <span><GoDotFill className='mt-1'/></span>
               </li>
             ))}
           </ul>
