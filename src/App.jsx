@@ -7,7 +7,7 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;
 
 // Configure base URL 
-axios.defaults.baseURL = 'http://localhost:7000';
+axios.defaults.baseURL = 'https://groozify-server.vercel.app';
 
 // Public Pages
 import HomePage from './pages/userPages/HomePage';
