@@ -9,70 +9,40 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-      const checkAuth = async () => {
-      try {
-        const response = await axios.get('/auth/check-auth', {
-          withCredentials: true, // Ensure cookies are sent with the request
-        });
-
-        if (response.status === 200) {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error('Authentication check failed:', error.response?.data || error.message);
-        setIsAuthenticated(false);
-      } finally {
-        setLoading(false); // Set loading to false once the check is complete
-      }
-    };
+  const checkAuth = async () => {
+    const token = localStorage.getItem('groozifyToken');
+    setIsAuthenticated(!!token); // Set to true if token exists
+    setLoading(false);
+  };
 
   // Check authentication status on component mount
   useEffect(() => {
     checkAuth();
-  }, []); // Run once on mount
+  }, []);
 
-  // Call checkAuth whenever isAuthenticated changes
-  useEffect(() => {
-    const recheckAuth = async () => {
-      if (!loading) {
-        try {
-          await checkAuth(); // Call the function whenever isAuthenticated changes
-        } catch (error) {
-          console.error('Error during rechecking authentication:', error);
-        }
+  const login = async (email) => {
+    try {
+      const response = await axios.post('/auth/login', { email });
+
+      if (response.status === 200) {
+        const { token } = response.data;
+        localStorage.setItem('groozifyToken', token);
+        setIsAuthenticated(true);
+        console.log('Login successful:', response.data);
+      } else {
+        setIsAuthenticated(false);
+        console.error('Unexpected response login failed:', response.data);
       }
-    };
-
-    recheckAuth(); // Invoke the function
-
-  }, [isAuthenticated]); // Run when isAuthenticated changes
-
-const login = async (email) => {
-  try {
-    const response = await axios.post('/auth/login', { email }, { withCredentials: true });
-
-    // Check if the login was successful
-    if (response.status === 200) {
-      // Assuming the server response indicates success
-      setIsAuthenticated(true); // Set authentication to true only if login is successful
-      console.log('Login successful:', response.data);
-    } else {
-      // Handle unexpected status codes
+    } catch (error) {
+      console.error('Login failed:', error.response?.data || error.message);
       setIsAuthenticated(false);
-      console.error('Unexpected response login failed:', response.data);
     }
-  } catch (error) {
-    console.error('Login failed:', error.response?.data || error.message);
-    setIsAuthenticated(false); // Set authentication to false on error
-  }
-};
-
+  };
 
   const logout = async () => {
     try {
-      await axios.post('/auth/logout', {}, { withCredentials: true });
+      await axios.post('/auth/logout');
+      localStorage.removeItem('token');
       setIsAuthenticated(false);
     } catch (error) {
       console.error('Logout failed:', error.response?.data || error.message);
