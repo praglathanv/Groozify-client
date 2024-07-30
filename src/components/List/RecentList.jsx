@@ -1,28 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { GoDotFill } from 'react-icons/go';
 
-const token = Cookies.get('token'); // Get the token from cookies
-
-
+// RecentList component
 const RecentList = () => {
   const [recentList, setRecentList] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const handleGetRecentList = async () => {
+    // Get the token from local storage
+    const token = localStorage.getItem('groozifyToken'); 
+    console.log(token)
     try {
+      
       const response = await axios.get('/user/grocery-lists', {
         headers: {
-          'Authorization': `Bearer ${token}` // Include token for authentication
-        }
+          'Authorization': `Bearer ${token}`, // Include token for authentication
+        },
       });
 
       if (response.status === 200) {
         const lists = response.data.lists;
         if (lists.length > 0) {
-          // Get the most recent list 
+          // Get the most recent list
           setRecentList(lists[lists.length - 1]);
         } else {
           setError('No grocery lists found.');
@@ -37,7 +38,6 @@ const RecentList = () => {
   };
 
   useEffect(() => {
-    console.log(token)
     handleGetRecentList(); // Call the function on component mount
   }, []);
 
@@ -57,10 +57,10 @@ const RecentList = () => {
           <ul className='mt-4 w-[75%] lg:w-[50%]'>
             {recentList.groceries.map(grocery => (
               <li key={grocery._id} className='border border-black rounded mt-2 p-2 flex'>
-                <span className='flex-1'>{grocery.item}</span> 
+                <span className='flex-1'>{grocery.item}</span>
                 <span className='flex-1'>-</span>
                 <span className='flex-1'>{grocery.quantity}</span>
-                <span ><GoDotFill className='mt-1'/></span>
+                <span><GoDotFill className='mt-1' /></span>
               </li>
             ))}
           </ul>
