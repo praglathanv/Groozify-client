@@ -18,18 +18,19 @@ const EditList = () => {
   const [dataErr, setDataErr] = useState(false);
   const [loading, setLoading] = useState(false); // State to manage loading
   const navigate = useNavigate();
-
+  const token = localStorage.getItem('groozifyToken'); 
   const itemInputRef = useRef(null);
   const quantityInputRef = useRef(null);
 
   // Fetch the list data
   useEffect(() => {
+
     const fetchListData = async () => {
       setLoading(true); // Start loading when fetching data
       try {
         const response = await axios.get(`/user/grocery-lists/${id}`, {
           headers: {
-            'Authorization': `Bearer ${Cookies.get('token')}`
+            'Authorization': `Bearer ${token}`
           }
         });
         if (response.status === 200) {
@@ -74,7 +75,7 @@ const EditList = () => {
     try {
       const response = await axios.delete(`/user/grocery-lists/${id}/items/${itemId}`, {
         headers: {
-          'Authorization': `Bearer ${Cookies.get('token')}`
+          'Authorization': `Bearer ${token}`
         }
       });
       
@@ -111,7 +112,7 @@ const EditList = () => {
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${Cookies.get('token')}` // Use token for authentication if needed
+            'Authorization': `Bearer ${token}` // Use token for authentication if needed
           }
         }
       );
