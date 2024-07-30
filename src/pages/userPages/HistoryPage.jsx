@@ -11,8 +11,8 @@ const HistoryPage = () => {
   const [error, setError] = useState('');
   const [selectedIds, setSelectedIds] = useState([]); // State to manage selected grocery list IDs
   const [loading, setLoading] = useState(false); // State to manage loading
-  const token = Cookies.get('token');
   const navigate = useNavigate();
+  const token = localStorage.getItem('groozifyToken'); 
   const URL = '/user/grocery-lists';
 
   const fetchGroceryLists = async () => {
