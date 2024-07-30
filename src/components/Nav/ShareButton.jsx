@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { FaShare } from 'react-icons/fa';
 import { IoLogoWhatsapp } from 'react-icons/io';
 
@@ -9,6 +8,7 @@ const ShareButton = ({ groceries, title }) => {
   const [error, setError] = useState('');
 
   const handleShare = async () => {
+    const token = localStorage.getItem('groozifyToken'); 
     try {
       const response = await axios.post(
         '/share',
@@ -19,7 +19,7 @@ const ShareButton = ({ groceries, title }) => {
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${Cookies.get('token')}` 
+            'Authorization': `Bearer ${token}` 
           }
         }
       );
