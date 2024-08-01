@@ -15,7 +15,8 @@ const ListPage = () => {
   const [groceries, setGroceries] = useState([]); 
   const [msg, setMsg] = useState('');
   const [dataErr, setDataErr] = useState(false);
-  const [loading, setLoading] = useState(false); // State to manage loading
+  const [loading, setLoading] = useState(false); 
+  const token = localStorage.getItem('groozifyToken'); // State to manage loading
   const navigate = useNavigate();
 
   // Create refs for the item and quantity inputs
@@ -60,7 +61,7 @@ const ListPage = () => {
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${Cookies.get('token')}` 
+            'Authorization': `Bearer ${token}` 
           }
         }
       );
